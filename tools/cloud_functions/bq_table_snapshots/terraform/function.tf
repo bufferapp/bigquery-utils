@@ -29,8 +29,9 @@ resource "random_id" "bucket_prefix" {
 #          BQ Target Dataset             #
 ##########################################
 resource "google_bigquery_dataset" "dataset" {
-  project    = var.storage_project_id
-  dataset_id = var.target_dataset_name
+  project                     = var.storage_project_id
+  dataset_id                  = var.target_dataset_name
+  delete_contents_on_destroy  = true
 }
 
 ##########################################

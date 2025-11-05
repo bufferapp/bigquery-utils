@@ -1,0 +1,11 @@
+# Cache files
+.channels_cache_v2.json
+.users_cache.json
+*_cache*.json
+
+# Terraform files
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+terraform.tfvars.backup

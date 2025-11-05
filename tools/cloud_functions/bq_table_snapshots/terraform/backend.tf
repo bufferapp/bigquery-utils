@@ -14,8 +14,7 @@
 
 terraform {
   backend "gcs" {
-    bucket = "YOUR_TF_STATE_CLOUD_STORAGE_BUCKET"
-    prefix = "terraform/state"
+    bucket = "terraform-state-backend-for-project-buffer-data"
+    prefix = "terraform/state/bq-snapshots"
   }
 }
-
