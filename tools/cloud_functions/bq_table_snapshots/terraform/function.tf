@@ -91,6 +91,7 @@ resource "google_cloudfunctions_function" "bq_backup_fetch_tables_names" {
   entry_point           = "main"
   source_archive_bucket = google_storage_bucket.bucket.name
   source_archive_object = google_storage_bucket_object.bq_backup_fetch_tables_names.name
+  service_account_email = google_service_account.fetcher.email
 
   environment_variables = {
     DATA_PROJECT_ID            = var.storage_project_id
@@ -102,6 +103,11 @@ resource "google_cloudfunctions_function" "bq_backup_fetch_tables_names" {
     event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
     resource   = google_pubsub_topic.snapshot_dataset_topic.id
   }
+
+  depends_on = [
+    google_bigquery_dataset_iam_member.fetcher_source_dataset,
+    google_pubsub_topic_iam_member.fetcher_pubsub
+  ]
 }
 
 ##########################################
@@ -128,6 +134,7 @@ resource "google_cloudfunctions_function" "bq_backup_create_snapshots" {
   entry_point           = "main"
   source_archive_bucket = google_storage_bucket.bucket.name
   source_archive_object = google_storage_bucket_object.bq_backup_create_snapshots.name
+  service_account_email = google_service_account.creator.email
 
   environment_variables = {
     BQ_DATA_PROJECT_ID = var.storage_project_id
@@ -138,5 +145,11 @@ resource "google_cloudfunctions_function" "bq_backup_create_snapshots" {
     event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
     resource   = google_pubsub_topic.bq_snapshot_create_snapshot_topic.id
   }
+
+  depends_on = [
+    google_project_iam_member.creator_job_user,
+    google_bigquery_dataset_iam_member.creator_source_dataset,
+    google_bigquery_dataset_iam_member.creator_target_dataset
+  ]
 }
 
